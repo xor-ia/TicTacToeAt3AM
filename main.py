@@ -9,20 +9,22 @@ def flatten(r2d):
 			n.append(i)
 	return n
 possiblegame=[0]
-def genval(game):
+def genval(game, apl=-math.inf, bet=math.inf):
 	if game.checkstate()!=-1:
 		st=game.checkstate()
 		if st==0:
 			return 0
 		return ((st-1)*2-1)*(game.turn*2-1)
-	stv=-math.inf
 	for i in game.genmov():
 		game.move(i)
 		possiblegame[0]+=1
-		stv=max(-genval(game), stv)
+		ev = -genval(game, -bet, -apl)
 		game.undo()
-	#print(stv)
-	return stv
+		if ev>=bet:
+			return bet
+		apl=max(ev, apl)
+		
+	return apl
 def aimove(game):
 	na={}
 	if sum(flatten(game.board))==0:
